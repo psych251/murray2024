@@ -14,12 +14,14 @@ format:
 
 Murray & Koopmann-Holm (2024) <https://doi.org/10.1037/emo0001364> contributed a compelling finding to the broader literature on how cultural norms and emotional processes can impact how Americans make sense of racial inequality. The paper cites previous findings on how culture can influence the types of emotions that are considered socially acceptable or valuable, and in turn, individuals' emotional processes. In Study 2 of the paper, the authors found that such culturally-driven emotional processes, specifically, the desire to avoid negative emotions (i.e., Avoided Negative Affect, ANA) in the United States, inhibited people's perception of racism as embedded throughout America's historical and current policies and practices. The results of this study identified a key barrier toward the development of a systemic understanding of racism in the United States, a type of understanding that has been shown to carry implications for support for racially progressive policies and other social change efforts. As my research focuses on these sorts of barriers, namely, the psychological factors that deter or compel Americans to address racial inequality, including the role of affect and American cultural values, this finding is particularly relevant. Ultimately, I aim to design interventions that incentivize White Americans to participate in racial equity efforts, or at the very least, to see racial inequality as a pressing, enduring issue, and this finding provides some of the foundation for that work, with its emphasis on the power of cultural context and the suppression of particular emotions.  
 
-To replicate this study, I will administer an online survey involving 3 conditions, an increased Avoided Negative Affect (ANA) condition, a decreased ANA condition, and a control condition. A copy of the full survey was made available online, and all 3 conditions are brief, written manipulations which did not require any advanced formatting or tools. I will randomly assign participants to one of the three conditions. After they review their assigned manipulation, they will respond to a series of measures, many of which are multi-item scales. They will answer questions about the emotions they would ideally like to feel in the current moment, the extent to which a series of incidents (some interpersonal, some systemic or institutional) reflect racism, their levels of American patriotism, how frequently they engage in behaviors or habits that reflect social desirability, their perceptions of what is right or wrong (i.e., moral), their demographics (e.g., political ideology, gender, age, race, major, etc.), and what they thought the study was about. Participants will be debriefed slightly differently based on the condition they were assigned to since the first sentence of the debrief explained the manipulation from the beginning of the survey. The GitHub repository for this replication project can be found here: <https://github.com/psych251/murray2024>.  
+To replicate this study, I will administer an online survey involving 3 conditions, an increased Avoided Negative Affect (ANA) condition, a decreased ANA condition, and a control condition. A copy of the full survey was made available online, and all 3 conditions are brief, written manipulations which did not require any advanced formatting or tools. I will randomly assign participants to one of the three conditions. After they review their assigned manipulation, they will respond to a series of measures, many of which are multi-item scales. They will answer questions about the emotions they feel in the current moment, the extent to which a series of incidents (some interpersonal, some systemic or institutional) reflect racism, how frequently they engage in behaviors or habits that reflect social desirability, their demographics (e.g., political ideology, gender, age, race, major, etc.), and what they thought the study was about. Participants will be debriefed slightly differently based on the condition they were assigned to since the first sentence of the debrief explained the manipulation from the beginning of the survey. The GitHub repository for this replication project can be found here: <https://github.com/psych251/murray2024>.  
 
 I predict a few challenges with this replication. First, for the original study, the authors recruited undergraduate students from one university, which could indicate that effects are constrained to a niche population, and certain aspects of the survey may become inapplicable (e.g., demographic questions having to do with participants' majors and school years). Also, the sample was racially diverse, and in an online sample, it might be more difficult to obtain the same racial composition. In the original analysis, the authors had to control for many factors, hence the need for so many survey measures. One challenge that could stem from this is that the dataset and statistical models could be cumbersome to handle. Finally, given the current political climate and perceptions of race-focused conversations, some participants in this replication study might be more hostile or more hesitant to respond to measures focused on these topics, which could lead to missing data and the need for exclusions. Further, the sample size is already quite small, so there is a possibility that too many exclusions could leave the replication study under-powered.   
 
 
 ## Methods
+
+Paradigm link: <https://stanforduniversity.qualtrics.com/jfe/form/SV_4IMpjoGrnAre61M> 
 
 ### Power Analysis
 
@@ -69,17 +71,90 @@ Data preparation following the analysis plan.
 ### Data Preparation
 
 #### Load Relevant Libraries and Functions
+library(car)        
+library(emmeans)    
+library(effectsize) 
+library(stringr)
+library(readr)
+library(tidyverse)
 
 #### Import data
+data <- read.csv("/Users/juliaproshan/Documents/GitHub/murray2024/data/pipelinecode_raw.csv")
 
-#### Data exclusion / filtering
-
-#### Prepare data for analysis - create columns etc.
+#### Data exclusion / filtering / new columns 
+data = data %>% 
+  filter(Status == "IP Address") %>% 
+  rowwise() %>%
+  mutate(Isolated_Racism_num1 = as.numeric(sub("^([1-7]).*", "\\1", Isolated_Racism_1)),
+         Isolated_Racism_num2 = as.numeric(sub("^([1-7]).*", "\\1", Isolated_Racism_2)),
+         Isolated_Racism_num3 = as.numeric(sub("^([1-7]).*", "\\1", Isolated_Racism_3)),
+         Isolated_Racism_num4 = as.numeric(sub("^([1-7]).*", "\\1", Isolated_Racism_4)),
+         Isolated_Racism_num5 = as.numeric(sub("^([1-7]).*", "\\1", Isolated_Racism_5)),
+         Isolated_Racism_num6 = as.numeric(sub("^([1-7]).*", "\\1", Isolated_Racism_6)),
+         Isolated_Racism_num7 = as.numeric(sub("^([1-7]).*", "\\1", Isolated_Racism_7)),
+          Isolated_Racism_composite = mean(c(Isolated_Racism_num1, Isolated_Racism_num2, Isolated_Racism_num3, Isolated_Racism_num4, Isolated_Racism_num5, Isolated_Racism_num6,Isolated_Racism_num7), na.rm = TRUE),
+         SysRacism_num1 = as.numeric(sub("^([1-7]).*", "\\1", SysRacism_Block1_1)),
+         SysRacism_num2 = as.numeric(sub("^([1-7]).*", "\\1", SysRacism_Block1_2)),
+         SysRacism_num3 = as.numeric(sub("^([1-7]).*", "\\1", SysRacism_Block1_3)),
+         SysRacism_num4 = as.numeric(sub("^([1-7]).*", "\\1", SysRacism_Block1_4)),
+         SysRacism_num5 = as.numeric(sub("^([1-7]).*", "\\1", SysRacism_Block1_5)),
+         SysRacism_num6 = as.numeric(sub("^([1-7]).*", "\\1", SysRacism_Block1_6)),
+         SysRacism_num7 = as.numeric(sub("^([1-7]).*", "\\1", SysRacism_Block1_7)),
+         SysRacism_num8 = as.numeric(sub("^([1-7]).*", "\\1", SysRacism_Block1_8)),
+         SysRacism_num9 = as.numeric(sub("^([1-7]).*", "\\1", SysRacism_Block2_1)),
+          SysRacism_num10 = as.numeric(sub("^([1-7]).*", "\\1", SysRacism_Block2_2)),
+         SysRacism_num11 = as.numeric(sub("^([1-7]).*", "\\1", SysRacism_Block2_3)),
+         SysRacism_num12 = as.numeric(sub("^([1-7]).*", "\\1", SysRacism_Block2_4)),
+         Systemic_Racism_composite = mean(c(SysRacism_num1, SysRacism_num2, SysRacism_num3, SysRacism_num4, SysRacism_num5, SysRacism_num6,SysRacism_num7, SysRacism_num8, SysRacism_num9, SysRacism_num10, SysRacism_num11, SysRacism_num12), na.rm = TRUE)) %>%
+  ungroup() %>% 
+  mutate(
+    Age_chr = str_trim(str_replace_all(as.character(Age), "\u00A0", " ")),  
+    Age_num = suppressWarnings(parse_number(Age_chr)),
+    Age_num = ifelse(Age_num < 10 | Age_num > 100, NA_real_, Age_num),
+    Pol_chr = str_trim(str_replace_all(as.character(Pol_Ideology_1), "\u00A0", " ")),  
+    Pol_num = suppressWarnings(parse_number(Pol_chr)))
+    
+str(data$Pol_num)
+         
 ```
 
 ### Confirmatory analysis
 
 The analyses as specified in the analysis plan.  
+
+```{r}
+#### fit model
+conf_model <- lm(
+  Systemic_Racism_composite ~ Condition + Isolated_Racism_composite + Pol_num + Age_num,
+  data = data
+)
+
+summary(conf_model)
+
+#### contrasts 
+
+emm_options(nesting = NULL)  # clear any inferred nesting
+
+emm <- emmeans(
+  conf_model, ~ Condition,
+  at = list(
+    Isolated_Racism_composite = mean(data$Isolated_Racism_composite, na.rm = TRUE),
+    Pol_num = mean(data$Pol_num, na.rm = TRUE),
+    Age_num = mean(data$Age_num, na.rm = TRUE)
+  )
+)
+
+contrast_list <- list(
+  increase_vs_control  = c( 1,  0, -1),
+  increase_vs_decrease = c( 1, -1,  0)
+)
+
+contrast(emm, contrast_list, adjust = "bonferroni") |> summary(infer = TRUE)
+
+# note: model code and contrasts are correct just insufficient observations to run 
+
+```
+
 
 *Side-by-side graph with original graph is ideal here*
 
