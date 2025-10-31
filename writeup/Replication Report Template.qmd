@@ -76,6 +76,7 @@ library(emmeans)
 library(effectsize) 
 library(stringr)
 library(readr)
+library(ggplot2)
 library(tidyverse)
 
 #### Import data
@@ -83,7 +84,8 @@ data <- read.csv("/Users/juliaproshan/Documents/GitHub/murray2024/data/pipelinec
 
 #### Data exclusion / filtering / new columns 
 data = data %>% 
-  filter(Status == "IP Address") %>% 
+  filter(Status == "IP Address" | Status == "Survey Test",
+         Consent_Agreement == "I agree") %>% 
   rowwise() %>%
   mutate(Isolated_Racism_num1 = as.numeric(sub("^([1-7]).*", "\\1", Isolated_Racism_1)),
          Isolated_Racism_num2 = as.numeric(sub("^([1-7]).*", "\\1", Isolated_Racism_2)),
@@ -125,11 +127,33 @@ The analyses as specified in the analysis plan.
 ```{r}
 #### fit model
 conf_model <- lm(
-  Systemic_Racism_composite ~ Condition + Isolated_Racism_composite + Pol_num + Age_num,
-  data = data
-)
+  Systemic_Racism_composite ~ Condition + Isolated_Racism_composite + Pol_num, 
+  data = data)
+
+# add back Age_num
 
 summary(conf_model)
+
+# 1️⃣ Get adjusted (estimated marginal) means for Condition
+emm <- emmeans(conf_model, ~ Condition)
+
+# 2️⃣ Convert to a data frame for plotting
+emm_df <- as.data.frame(emm)
+
+# 3️⃣ Plot
+ggplot(emm_df, aes(x = Condition, y = emmean, fill = Condition)) +
+  geom_col(color = "black", width = 0.6) +          # bars for adjusted means
+  geom_errorbar(aes(ymin = emmean - SE, ymax = emmean + SE), 
+                width = 0.15, linewidth = 0.8) +    # SE error bars
+  labs(
+    title = "Systemic Racism Acknowledgment by Condition",
+    x = "Condition",
+    y = "Adjusted Mean (controlling for Isolated Racism & Ideology)"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(legend.position = "none")
+
+# note in caption in slide controlling for Isolated Racism & political Ideology
 
 #### contrasts 
 
