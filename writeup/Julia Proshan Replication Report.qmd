@@ -1,0 +1,320 @@
+---
+title: "Replication of Facing Discomfort: Avoided Negative Affect Shapes the Acknowledgment of Systemic Racism by Murray & Koopmann-Holm (2024, Emotion)"
+author: "Julia Proshan (jproshan@stanford.edu)"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+format:
+  html:
+    toc: true
+    toc_depth: 3
+---
+
+<!-- Replication reports should all use this template to standardize reporting across projects.  These reports will be public supplementary materials that accompany the summary report(s) of the aggregate results. -->
+
+## Introduction
+
+Murray & Koopmann-Holm (2024) <https://doi.org/10.1037/emo0001364> contributed a compelling finding to the broader literature on how cultural norms and emotional processes can impact how Americans make sense of racial inequality. The paper cites previous findings on how culture can influence the types of emotions that are considered socially acceptable or valuable, and in turn, individuals' emotional processes. In Study 2 of the paper, the authors found that such culturally-driven emotional processes, specifically, the desire to avoid negative emotions (i.e., Avoided Negative Affect, ANA) in the United States, inhibited people's perception of racism as embedded throughout America's historical and current policies and practices. The results of this study identified a key barrier toward the development of a systemic understanding of racism in the United States, a type of understanding that has been shown to carry implications for support for racially progressive policies and other social change efforts. As my research focuses on these sorts of barriers, namely, the psychological factors that deter or compel Americans to address racial inequality, including the role of affect and American cultural values, this finding is particularly relevant. Ultimately, I aim to design interventions that incentivize White Americans to participate in racial equity efforts, or at the very least, to see racial inequality as a pressing, enduring issue, and this finding provides some of the foundation for that work, with its emphasis on the power of cultural context and the suppression of particular emotions.  
+
+To replicate this study, I will administer an online survey involving 3 conditions, an increased Avoided Negative Affect (ANA) condition, a decreased ANA condition, and a control condition. A copy of the full survey was made available online, and all 3 conditions are brief, written manipulations which did not require any advanced formatting or tools. I will randomly assign participants to one of the three conditions. After they review their assigned manipulation, they will respond to a series of measures, many of which are multi-item scales. They will answer questions about the emotions they feel in the current moment, including what they actually feel, ideally would like to feel, and would like to avoid feeling, the extent to which a series of incidents (some interpersonal, some systemic or institutional) reflect racism, how frequently they engage in behaviors or habits that reflect social desirability, their demographics (e.g., political ideology, gender, age, race, major, etc.), and what they thought the study was about. Participants will be debriefed slightly differently based on the condition they were assigned to since the first sentence of the debrief explains the manipulation from the beginning of the survey. The GitHub repository for this replication project can be found here: <https://github.com/psych251/murray2024>.  
+
+I predict a few challenges with this replication. First, for the original study, the authors recruited undergraduate students from one university, which could indicate that effects are constrained to a niche population, and certain aspects of the survey may become inapplicable (e.g., demographic questions having to do with participants' majors and school years). Also, the sample was racially diverse, and in an online sample, it might be more difficult to obtain the same racial composition. In the original analysis, the authors had to control for many factors. One challenge that could stem from this is that the primary statistical models could be complicated to interpret. Finally, given the current political climate and perceptions of race-focused conversations, some participants in this replication study might be more hostile or more hesitant to respond to measures focused on these topics, which could lead to missing data and the need for exclusions. Further, the sample size is already quite small, so there is a possibility that too many exclusions could leave the replication study under-powered.   
+
+
+## Methods
+
+Paradigm link: <https://stanforduniversity.qualtrics.com/jfe/form/SV_4IMpjoGrnAre61M> 
+
+### Power Analysis
+
+Original effect size, power analysis for samples to achieve 80%, 90%, 95% power to detect that effect size.  Considerations of feasibility for selecting planned sample size.
+
+```{r}
+install.packages("pwrss")
+library(pwrss)
+
+f  <- 0.30 # The effect size the authors incorporated in their power analysis 
+f2 <- f^2   # Cohen's f-squared
+f2
+# [1] 0.09
+
+design_0cov <- pwrss.f.ancova(
+  f2          = 0.30^2,  # Cohen's f^2
+  n.levels    = 3,       # 3 groups
+  n.covariates = 6,      # number of covariates in the ANCOVA
+  alpha       = 0.05,
+  power       = 0.80
+)
+
+# 0 covariates: 111, 6 covariates: 150 (more conservative, model will likely have 2 so somewhere in between would be a reasonable sample size)
+
+
+
+
+
+```
+
+
+### Planned Sample
+
+Planned sample size and/or termination rule, sampling frame, known demographics if any, preselection rules if any.
+
+Based on a power analysis at 80% power, the planned sample size is 130 participants. This analysis was based on the effect size the original authors included in their power analysis, which was the effect size of similar effect in their Study 1. It was based on an ANCOVA as that was the statistical test used in Study 1, which will also be used in Study 2 (the current study being replicated). I ran multiple power analyses to account for one simple main effect ANCOVA versus an ANCOVA with 6 covariates. Given that one of the primary statistical tests will include 2 covariates, I selected a sample size in the middle of the range of these two analyses. 
+
+The sample will be a standard sample from Prolific, where the only criteria will be that participants are 18 years or older and based in the United States. 
+
+### Materials
+
+All materials - can quote directly from original article - just put the text in quotations and note that this was followed precisely.  Or, quote directly and just point out exceptions to what was described in the original article.
+
+Conditions
+"ANA Manipulation. After completing the consent form and
+seeing a reminder to please answer the following questions thoughtfully and honestly, participants in the 'increase ANA' condition
+were shown the following instructions: 'Research indicates that feeling negative emotions is counterproductive for information processing. Therefore, while you complete this survey, we ask you to try to
+avoid feeling negative emotions. For example, if you are starting to
+feel frustrated, stressed, anxious, sad, bored, or any other negative
+emotion while completing the survey, please try to push these feelings
+away. Please try your best to follow this instruction as we are studying
+the effects of you trying to avoid feeling negative emotions.'
+In the 'decrease ANA' condition, participants were shown the
+following instructions: 'Research indicates that feeling negative
+emotions is productive for information processing. Therefore,
+while you complete this survey, we ask you to try to accept feeling
+negative emotions. For example, if you are starting to feel frustrated,
+stressed, anxious, sad, bored, or any other negative emotion while
+completing the survey, please try to embrace these feelings. Please
+try your best to follow this instruction as we are studying the effects
+of you trying to accept feeling negative emotions.'
+Lastly, participants in the control condition were shown the following instructions: 'Research indicates that feeling emotions is
+sometimes productive and sometimes counterproductive for information processing. Therefore, while you complete this survey, we
+ask you to try to select the option that best describes you. For example, if you are unsure about a question in the survey, please try to
+select the response that is closest to representing your views.
+Please try your best to follow this instruction as we are studying
+the effects of information processing.'
+Before completing a new portion of the survey, participants were
+reminded of their instructions. In the 'increase ANA' condition, participants saw, 'Friendly reminder: Please try to avoid feeling negative emotions while completing this portion of the survey.' In the
+'decrease ANA' condition, participants saw, 'Friendly reminder:
+Please try to accept feeling negative emotions while completing
+this portion of the survey.' Finally, in the control condition, participants saw, 'Friendly reminder: Please select the option that best
+describes you while completing this portion of the survey.'"
+
+
+Dependent Measures 
+"Momentary Affect Valuation Index (Momentary AVI). As in Study 1, we used the extended version (as described in Koopmann-Holm & Tsai, 2014) of the [Affect Valuation Index] (Tsai et al., 2006). However, to assess participants’ affective goals as a result of our manipulations, instead of using global ratings (average ratings over the course of a typical week), participants in this study rated their
+actual, avoided, and ideal affect (in that order) at that moment (i.e.,
+'rate how you actually feel/want to avoid feeling/would ideally like
+to feel right now'). They rated the same 37 different affective states
+as in Study 1, but this time, they used a 5-point scale ranging from
+1 (not at all) to 5 (extremely). We created the same mean-deviated
+aggregate scores for avoided negative (Cronbach’s alpha = .87,
+M = 1.26, SD = 0.42), actual negative (Cronbach’s alpha = .81,
+M = 0.01, SD = 0.52), ideal positive (Cronbach’s alpha = .88, M =
+1.58, SD = 0.53), and actual positive affect (Cronbach’s alpha = .86,
+M = 0.24, SD = 0.62) as in Study 1."
+
+"Perceptions of Racism. Like in Study 1, participants rated the
+extent to which they perceived systemic and isolated racism in 14 scenarios on a 7-point scale from 1 (not at all) to 7 (certainly) (Bonam
+et al., 2019). However, because we were interested in acknowledging
+racism toward all people of color, we made a few adjustments to the
+wording of some of the isolated racism items, most of which were
+specifically about Black people. We also made these changes hoping
+that the internal consistency of the isolated racism subscale would
+increase. The updated items read 'A person of color was pulled
+over for speeding by a White highway patrol officer. Unknown to
+the man, his registration had expired earlier that month. Rather than
+give him a ticket and let him continue, the officer impounded the vehicle at the man’s expense' and 'A person of color made reservations
+for a rental car over the phone, but when she arrived in person to collect the car, the agent informed her that no cars were available.'
+Because most of the original systemic racism items referred to people
+of color in general, we made no changes to those items. Cronbach’s
+alphas (means and standard deviations in parentheses) were .85 for
+systemic racism (M = 4.70, SD = 1.23) and .62 for isolated racism
+(M = 5.09, SD = 1.10). Hence, the internal consistency for isolated
+racism was slightly higher compared to in Study 1, but so was the
+internal consistency for systemic racism."
+
+[Removed: Moral Foundations Questionnaire - measure not part of primary result being replicated]
+
+"Social Desirability Scale. Because we instructed participants to
+try to avoid or accept negative emotions and then asked them about
+their ANA, we could have induced demand characteristics.
+Therefore, to control for participants’ tendency to complete the survey in a socially desirable manner, participants completed 14 items
+from the Marlowe–Crowne Social Desirability Scale (Crowne &
+Marlowe, 1960), which assesses participants’ desire for social
+approval using a 5-point scale ranging from 1 (not at all true) to
+5 (extremely true). Items include statements like 'Before voting I
+thoroughly investigate the qualifications of all the candidates.'
+Cronbach’s alpha (mean and standard deviation in parentheses)
+was .66 for the scale (M = 3.08, SD = 0.46)."
+
+"Demographics Questionnaire. Participants completed the same
+demographics questionnaire as in Study 1 assessing their gender, age,
+ethnicity, and political ideology."
+
+
+### Procedure	
+
+Can quote directly from original article - just put the text in quotations and note that this was followed precisely.  Or, quote directly and just point out exceptions to what was described in the original article.
+
+"All participants completed the measures listed below [in the order under "Measures" in the Materials section] at a place and time convenient for them. Because this study was conducted online, we added seven attention check items throughout the
+survey (see the online supplemental materials [sample: 'Please select '2' as your response for this item.']). As in Study 1, we excluded participants who did not pass all attention checks. The study was approved by [Stanford University’s IRB as part of the PSYCH 251 course projects], and we obtained informed consent from all participants. At the end of the study, all participants were debriefed."
+
+Participants were assigned to one of the three conditions (discussed in the Materials section). See also the Introduction section, second paragraph for the full procedure. 
+
+### Analysis Plan
+
+Can also quote directly, though it is less often spelled out effectively for an analysis strategy section.  The key is to report an analysis strategy that is as close to the original - data cleaning rules, data exclusion rules, covariates, etc. - as possible.  
+
+Per the original study, I will run an ANCOVA; first, I will fit a linear model predicting systemic racism perceptions from experimental condition, while controlling for isolated racism perceptions, political ideology, and age. I will use a Type II Sum of Squares ANCOVA to test the unique effect of condition after adjusting for the covariates. I then will conduct planned pairwise contrasts comparing (1) the Increase ANA condition vs. the Control condition, and (2) the Increase ANA condition vs. the Decrease ANA condition. Prior to this, I will likely run the ANCOVA without the control variables for a clearer causal inference. This test was not reported in the paper; the primary analysis incorporated the aforementioned covariates in the model.I will also run a model where social desirability is a covariate as the authors did the same to control for social desirability in all of their results. 
+
+I will abide by the original paper's exclusion rules of removing participants who do not pass all of the attention check questions. 
+
+**Clarify key analysis of interest here**  You can also pre-specify additional analyses you plan to do.
+
+### Differences from Original Study
+
+Explicitly describe known differences in sample, setting, procedure, and analysis plan from original study.  The goal, of course, is to minimize those differences, but differences will inevitably occur.  Also, note whether such differences are anticipated to make a difference based on claims in the original article or subsequent published research on the conditions for obtaining the effect.
+
+The key differences in this replication from the original study include the sample, which will now come from Prolific instead of the Santa Clara University campus (where undergraduates were recruited, and there was a specific racial composition of the sample). Given the logistical and budgetary constraints of data collection for this course project, I will be using a standard Prolific convenience sample with no tailored screeners, apart from location in the United States. I also removed the Moral Foundations Questionnaire from my replication study to shorten the length, due to the aforementioned constraints but also because the specific results I aim to replicate do not include this measure in their respective statistical models. Finally, I tweaked the racial demographic questions; there is now only one question that asks about race/ethnicity, and the format is multiple choice rather than free response for the purpose of simpler data analysis.  
+
+### Methods Addendum (Post Data Collection)
+
+You can comment this section out prior to final report with data collection.
+
+#### Actual Sample
+  Sample size, demographics, data exclusions based on rules spelled out in analysis plan
+
+#### Differences from pre-data collection methods plan
+  Any differences from what was described as the original plan, or “none”.
+
+
+## Results
+
+
+### Data preparation
+
+Data preparation following the analysis plan.
+	
+```{r include=F}
+### Data Preparation
+
+#### Load Relevant Libraries and Functions
+library(car)        
+library(emmeans)    
+library(effectsize) 
+library(stringr)
+library(readr)
+library(ggplot2)
+library(tidyverse)
+
+#### Import data
+data <- read.csv("/Users/juliaproshan/Documents/GitHub/murray2024/data/pipelinecode_raw.csv")
+
+#### Data exclusion / filtering / new columns 
+data = data %>% 
+  filter(Status == "IP Address" | Status == "Survey Test",
+         Consent_Agreement == "I agree") %>% 
+  rowwise() %>%
+  mutate(Isolated_Racism_num1 = as.numeric(sub("^([1-7]).*", "\\1", Isolated_Racism_1)),
+         Isolated_Racism_num2 = as.numeric(sub("^([1-7]).*", "\\1", Isolated_Racism_2)),
+         Isolated_Racism_num3 = as.numeric(sub("^([1-7]).*", "\\1", Isolated_Racism_3)),
+         Isolated_Racism_num4 = as.numeric(sub("^([1-7]).*", "\\1", Isolated_Racism_4)),
+         Isolated_Racism_num5 = as.numeric(sub("^([1-7]).*", "\\1", Isolated_Racism_5)),
+         Isolated_Racism_num6 = as.numeric(sub("^([1-7]).*", "\\1", Isolated_Racism_6)),
+         Isolated_Racism_num7 = as.numeric(sub("^([1-7]).*", "\\1", Isolated_Racism_7)),
+          Isolated_Racism_composite = mean(c(Isolated_Racism_num1, Isolated_Racism_num2, Isolated_Racism_num3, Isolated_Racism_num4, Isolated_Racism_num5, Isolated_Racism_num6,Isolated_Racism_num7), na.rm = TRUE),
+         SysRacism_num1 = as.numeric(sub("^([1-7]).*", "\\1", SysRacism_Block1_1)),
+         SysRacism_num2 = as.numeric(sub("^([1-7]).*", "\\1", SysRacism_Block1_2)),
+         SysRacism_num3 = as.numeric(sub("^([1-7]).*", "\\1", SysRacism_Block1_3)),
+         SysRacism_num4 = as.numeric(sub("^([1-7]).*", "\\1", SysRacism_Block1_4)),
+         SysRacism_num5 = as.numeric(sub("^([1-7]).*", "\\1", SysRacism_Block1_5)),
+         SysRacism_num6 = as.numeric(sub("^([1-7]).*", "\\1", SysRacism_Block1_6)),
+         SysRacism_num7 = as.numeric(sub("^([1-7]).*", "\\1", SysRacism_Block1_7)),
+         SysRacism_num8 = as.numeric(sub("^([1-7]).*", "\\1", SysRacism_Block1_8)),
+         SysRacism_num9 = as.numeric(sub("^([1-7]).*", "\\1", SysRacism_Block2_1)),
+          SysRacism_num10 = as.numeric(sub("^([1-7]).*", "\\1", SysRacism_Block2_2)),
+         SysRacism_num11 = as.numeric(sub("^([1-7]).*", "\\1", SysRacism_Block2_3)),
+         SysRacism_num12 = as.numeric(sub("^([1-7]).*", "\\1", SysRacism_Block2_4)),
+         Systemic_Racism_composite = mean(c(SysRacism_num1, SysRacism_num2, SysRacism_num3, SysRacism_num4, SysRacism_num5, SysRacism_num6,SysRacism_num7, SysRacism_num8, SysRacism_num9, SysRacism_num10, SysRacism_num11, SysRacism_num12), na.rm = TRUE)) %>%
+  ungroup() %>% 
+  mutate(
+    Age_chr = str_trim(str_replace_all(as.character(Age), "\u00A0", " ")),  
+    Age_num = suppressWarnings(parse_number(Age_chr)),
+    Age_num = ifelse(Age_num < 10 | Age_num > 100, NA_real_, Age_num),
+    Pol_chr = str_trim(str_replace_all(as.character(Pol_Ideology_1), "\u00A0", " ")),  
+    Pol_num = suppressWarnings(parse_number(Pol_chr)))
+    
+str(data$Pol_num)
+         
+```
+
+### Confirmatory analysis
+
+The analyses as specified in the analysis plan.  
+
+```{r}
+#### fit model
+conf_model <- lm(
+  Systemic_Racism_composite ~ Condition + Isolated_Racism_composite + Pol_num, 
+  data = data)
+
+# add back Age_num
+
+summary(conf_model)
+
+# 1️⃣ Get adjusted (estimated marginal) means for Condition
+emm <- emmeans(conf_model, ~ Condition)
+
+# 2️⃣ Convert to a data frame for plotting
+emm_df <- as.data.frame(emm)
+
+# 3️⃣ Plot
+ggplot(emm_df, aes(x = Condition, y = emmean, fill = Condition)) +
+  geom_col(color = "black", width = 0.6) +
+  geom_errorbar(aes(ymin = lower.CL, ymax = upper.CL), width = 0.15) +
+  scale_x_discrete(labels = c(
+    "Control Condition" = "Control",
+    "Decrease ANA Condition" = "Decrease ANA",
+    "Increase ANA Condition" = "Increase ANA"
+  )) +
+  labs(x = "Condition", y = "Systemic Racism Acknowledgment")
+
+# note in caption in slide controlling for Isolated Racism & political Ideology
+
+#### contrasts 
+
+emm_options(nesting = NULL)  # clear any inferred nesting
+
+emm <- emmeans(
+  conf_model, ~ Condition,
+  at = list(
+    Isolated_Racism_composite = mean(data$Isolated_Racism_composite, na.rm = TRUE),
+    Pol_num = mean(data$Pol_num, na.rm = TRUE),
+    Age_num = mean(data$Age_num, na.rm = TRUE)
+  )
+)
+
+contrast_list <- list(
+  increase_vs_control  = c( 1,  0, -1),
+  increase_vs_decrease = c( 1, -1,  0)
+)
+
+contrast(emm, contrast_list, adjust = "bonferroni") |> summary(infer = TRUE)
+
+# note: model code and contrasts are correct just insufficient observations to run 
+
+```
+
+
+*Side-by-side graph with original graph is ideal here*
+
+### Exploratory analyses
+
+Any follow-up analyses desired (not required).  
+
+## Discussion
+
+### Summary of Replication Attempt
+
+Open the discussion section with a paragraph summarizing the primary result from the confirmatory analysis and the assessment of whether it replicated, partially replicated, or failed to replicate the original result.  
+
+### Commentary
+
+Add open-ended commentary (if any) reflecting (a) insights from follow-up exploratory analysis, (b) assessment of the meaning of the replication (or not) - e.g., for a failure to replicate, are the differences between original and present study ones that definitely, plausibly, or are unlikely to have been moderators of the result, and (c) discussion of any objections or challenges raised by the current and original authors about the replication attempt.  None of these need to be long.
