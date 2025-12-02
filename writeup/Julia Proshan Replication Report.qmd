@@ -28,21 +28,21 @@ Paradigm link: <https://stanforduniversity.qualtrics.com/jfe/form/SV_4IMpjoGrnAr
 Original effect size, power analysis for samples to achieve 80%, 90%, 95% power to detect that effect size.  Considerations of feasibility for selecting planned sample size.
 
 ```{r}
-install.packages("pwrss")
-library(pwrss)
-
-f  <- 0.30 # The effect size the authors incorporated in their power analysis 
-f2 <- f^2   # Cohen's f-squared
-f2
-# [1] 0.09
-
-design_0cov <- pwrss.f.ancova(
-  f2          = 0.30^2,  # Cohen's f^2
-  n.levels    = 3,       # 3 groups
-  n.covariates = 6,      # number of covariates in the ANCOVA
-  alpha       = 0.05,
-  power       = 0.80
-)
+# install.packages("pwrss")
+# library(pwrss)
+# 
+# f  <- 0.30 # The effect size the authors incorporated in their power analysis 
+# f2 <- f^2   # Cohen's f-squared
+# f2
+# # [1] 0.09
+# 
+# design_0cov <- pwrss.f.ancova(
+#   f2          = 0.30^2,  # Cohen's f^2
+#   n.levels    = 3,       # 3 groups
+#   n.covariates = 6,      # number of covariates in the ANCOVA
+#   alpha       = 0.05,
+#   power       = 0.80
+# )
 
 # 0 covariates: 111, 6 covariates: 150 (more conservative, model will likely have 2 so somewhere in between would be a reasonable sample size)
 
@@ -162,9 +162,9 @@ Participants were assigned to one of the three conditions (discussed in the Mate
 
 Can also quote directly, though it is less often spelled out effectively for an analysis strategy section.  The key is to report an analysis strategy that is as close to the original - data cleaning rules, data exclusion rules, covariates, etc. - as possible.  
 
-Per the original study, I will run an ANCOVA; first, I will fit a linear model predicting systemic racism perceptions from experimental condition, while controlling for isolated racism perceptions, political ideology, and age. I will use a Type II Sum of Squares ANCOVA to test the unique effect of condition after adjusting for the covariates. I then will conduct planned pairwise contrasts comparing (1) the Increase ANA condition vs. the Control condition, and (2) the Increase ANA condition vs. the Decrease ANA condition. Prior to this, I will likely run the ANCOVA without the control variables for a clearer causal inference. This test was not reported in the paper; the primary analysis incorporated the aforementioned covariates in the model.I will also run a model where social desirability is a covariate as the authors did the same to control for social desirability in all of their results. 
+Per the original study, to test for condition effects, I will run an ANCOVA; first, I will fit a linear model predicting systemic racism perceptions from experimental condition, while controlling for isolated racism perceptions. I will then run a Type II Sum of Squares ANCOVA on this model. If there are variations in demographic distributions across the three conditions (e.g., political ideology, age), I will run another model where I control for those demographic factors (i.e., add covariates). These covariaties may differ from the exact covariates in the model from the original paper as they are sample-specific. I then will conduct planned pairwise contrasts comparing (1) the Increase ANA condition vs. the Control condition, and (2) the Increase ANA condition vs. the Decrease ANA condition.
 
-I will abide by the original paper's exclusion rules of removing participants who do not pass all of the attention check questions. 
+I will abide by the original paper's exclusion rules of removing participants who do not pass all of the attention check questions (e.g., "Please select '2' for this question"). 
 
 **Clarify key analysis of interest here**  You can also pre-specify additional analyses you plan to do.
 
@@ -193,9 +193,7 @@ You can comment this section out prior to final report with data collection.
 Data preparation following the analysis plan.
 	
 ```{r include=F}
-### Data Preparation
 
-#### Load Relevant Libraries and Functions
 library(car)        
 library(emmeans)    
 library(effectsize) 
@@ -205,43 +203,46 @@ library(ggplot2)
 library(tidyverse)
 
 #### Import data
-data <- read.csv("/Users/juliaproshan/Documents/GitHub/murray2024/data/pipelinecode_raw.csv")
+data <- read.csv("/Users/juliaproshan/Documents/GitHub/murray2024/data/251 Replication - Murray & Koopmann-Holm (2024)_November 30, 2025_12.48 copy.csv")
 
 #### Data exclusion / filtering / new columns 
 data = data %>% 
-  filter(Status == "IP Address" | Status == "Survey Test",
-         Consent_Agreement == "I agree") %>% 
+  filter(Status == "IP Address") %>% 
+  filter(Consent_Agreement == "I agree") %>% 
+  filter(MAVI_Actual_6_5 == "5  Extremely") %>% 
+  filter(MAVI_Avoid_4_5 == "5  Extremely") %>% 
+  filter(MAVI_Ideal_2_5 == "Moderately") %>% 
+  filter(Isolated_Racism_B2_2 == " 2") %>% 
+  filter(SysRacism_B2_1 == "1  Not at all") %>% 
   rowwise() %>%
-  mutate(Isolated_Racism_num1 = as.numeric(sub("^([1-7]).*", "\\1", Isolated_Racism_1)),
-         Isolated_Racism_num2 = as.numeric(sub("^([1-7]).*", "\\1", Isolated_Racism_2)),
-         Isolated_Racism_num3 = as.numeric(sub("^([1-7]).*", "\\1", Isolated_Racism_3)),
-         Isolated_Racism_num4 = as.numeric(sub("^([1-7]).*", "\\1", Isolated_Racism_4)),
-         Isolated_Racism_num5 = as.numeric(sub("^([1-7]).*", "\\1", Isolated_Racism_5)),
-         Isolated_Racism_num6 = as.numeric(sub("^([1-7]).*", "\\1", Isolated_Racism_6)),
-         Isolated_Racism_num7 = as.numeric(sub("^([1-7]).*", "\\1", Isolated_Racism_7)),
-          Isolated_Racism_composite = mean(c(Isolated_Racism_num1, Isolated_Racism_num2, Isolated_Racism_num3, Isolated_Racism_num4, Isolated_Racism_num5, Isolated_Racism_num6,Isolated_Racism_num7), na.rm = TRUE),
-         SysRacism_num1 = as.numeric(sub("^([1-7]).*", "\\1", SysRacism_Block1_1)),
-         SysRacism_num2 = as.numeric(sub("^([1-7]).*", "\\1", SysRacism_Block1_2)),
-         SysRacism_num3 = as.numeric(sub("^([1-7]).*", "\\1", SysRacism_Block1_3)),
-         SysRacism_num4 = as.numeric(sub("^([1-7]).*", "\\1", SysRacism_Block1_4)),
-         SysRacism_num5 = as.numeric(sub("^([1-7]).*", "\\1", SysRacism_Block1_5)),
-         SysRacism_num6 = as.numeric(sub("^([1-7]).*", "\\1", SysRacism_Block1_6)),
-         SysRacism_num7 = as.numeric(sub("^([1-7]).*", "\\1", SysRacism_Block1_7)),
-         SysRacism_num8 = as.numeric(sub("^([1-7]).*", "\\1", SysRacism_Block1_8)),
-         SysRacism_num9 = as.numeric(sub("^([1-7]).*", "\\1", SysRacism_Block2_1)),
-          SysRacism_num10 = as.numeric(sub("^([1-7]).*", "\\1", SysRacism_Block2_2)),
-         SysRacism_num11 = as.numeric(sub("^([1-7]).*", "\\1", SysRacism_Block2_3)),
-         SysRacism_num12 = as.numeric(sub("^([1-7]).*", "\\1", SysRacism_Block2_4)),
-         Systemic_Racism_composite = mean(c(SysRacism_num1, SysRacism_num2, SysRacism_num3, SysRacism_num4, SysRacism_num5, SysRacism_num6,SysRacism_num7, SysRacism_num8, SysRacism_num9, SysRacism_num10, SysRacism_num11, SysRacism_num12), na.rm = TRUE)) %>%
-  ungroup() %>% 
-  mutate(
-    Age_chr = str_trim(str_replace_all(as.character(Age), "\u00A0", " ")),  
-    Age_num = suppressWarnings(parse_number(Age_chr)),
-    Age_num = ifelse(Age_num < 10 | Age_num > 100, NA_real_, Age_num),
-    Pol_chr = str_trim(str_replace_all(as.character(Pol_Ideology_1), "\u00A0", " ")),  
-    Pol_num = suppressWarnings(parse_number(Pol_chr)))
+  mutate(Isolated_Racism_num1 = as.integer(sub("^([1-7]).*", "\\1", Isolated_Racism_B1_1)),
+         Isolated_Racism_num2 = as.numeric(sub("^([1-7]).*", "\\1", Isolated_Racism_B1_2)),
+         Isolated_Racism_num4 = as.numeric(sub("^([1-7]).*", "\\1", Isolated_Racism_B2_1)), # skip Isolated_Racism_B2_2 for attention check 
+         Isolated_Racism_num5 = as.numeric(sub("^([1-7]).*", "\\1", Isolated_Racism_B3_1)),
+         Isolated_Racism_num6 = as.numeric(sub("^([1-7]).*", "\\1", Isolated_Racism_B3_2)),
+         Isolated_Racism_num7 = as.numeric(sub("^([1-7]).*", "\\1", Isolated_Racism_B4_1)),
+          Isolated_Racism_composite = mean(c(Isolated_Racism_num1, Isolated_Racism_num2, Isolated_Racism_num4, Isolated_Racism_num5, Isolated_Racism_num6, Isolated_Racism_num7), na.rm = TRUE),
+         SysRacism_num1 = as.numeric(sub("^([1-7]).*", "\\1", SysRacism_B1_1)),
+         SysRacism_num2 = as.numeric(sub("^([1-7]).*", "\\1", SysRacism_B1_2)),
+         SysRacism_num4 = as.numeric(sub("^([1-7]).*", "\\1", SysRacism_B2_2)),
+         SysRacism_num5 = as.numeric(sub("^([1-7]).*", "\\1", SysRacism_B3_1)),
+         SysRacism_num6 = as.numeric(sub("^([1-7]).*", "\\1", SysRacism_B3_2)),
+         SysRacism_num7 = as.numeric(sub("^([1-7]).*", "\\1", SysRacism_B4_1)),
+         SysRacism_num8 = as.numeric(sub("^([1-7]).*", "\\1", SysRacism_B4_2)),
+         SysRacism_num9 = as.numeric(sub("^([1-7]).*", "\\1", SysRacism_B5_1)),
+         SysRacism_num10 = as.numeric(sub("^([1-7]).*", "\\1", SysRacism_B5_2)),
+         SysRacism_num11 = as.numeric(sub("^([1-7]).*", "\\1", SysRacism_B6_1)),
+         SysRacism_num12 = as.numeric(sub("^([1-7]).*", "\\1", SysRacism_B6_2)),
+         Systemic_Racism_composite = mean(c(SysRacism_num1, SysRacism_num2, SysRacism_num4, SysRacism_num5, SysRacism_num6, SysRacism_num7,SysRacism_num8, SysRacism_num9, SysRacism_num10, SysRacism_num11, SysRacism_num12), na.rm = TRUE)) %>%   # remove SysRacism_B2_1 for attention check 
+  ungroup() 
+  # mutate(
+  #   Age_chr = str_trim(str_replace_all(as.character(Age), "\u00A0", " ")),  
+  #   Age_num = suppressWarnings(parse_number(Age_chr)),
+  #   Age_num = ifelse(Age_num < 10 | Age_num > 100, NA_real_, Age_num),
+  #   Pol_chr = str_trim(str_replace_all(as.character(Pol_Ideology_1), "\u00A0", " ")),  
+  #   Pol_num = suppressWarnings(parse_number(Pol_chr)))
     
-str(data$Pol_num)
+# str(data$Pol_num)
          
 ```
 
@@ -250,45 +251,22 @@ str(data$Pol_num)
 The analyses as specified in the analysis plan.  
 
 ```{r}
-#### fit model
+
+# Pilot Analyses 
+
+# model 
 conf_model <- lm(
-  Systemic_Racism_composite ~ Condition + Isolated_Racism_composite + Pol_num, 
-  data = data)
+  Systemic_Racism_composite ~ Condition + Isolated_Racism_composite, data = data)
 
-# add back Age_num
+Anova(conf_model)
 
-summary(conf_model)
-
-# 1️⃣ Get adjusted (estimated marginal) means for Condition
+# contrasts 
 emm <- emmeans(conf_model, ~ Condition)
-
-# 2️⃣ Convert to a data frame for plotting
-emm_df <- as.data.frame(emm)
-
-# 3️⃣ Plot
-ggplot(emm_df, aes(x = Condition, y = emmean, fill = Condition)) +
-  geom_col(color = "black", width = 0.6) +
-  geom_errorbar(aes(ymin = lower.CL, ymax = upper.CL), width = 0.15) +
-  scale_x_discrete(labels = c(
-    "Control Condition" = "Control",
-    "Decrease ANA Condition" = "Decrease ANA",
-    "Increase ANA Condition" = "Increase ANA"
-  )) +
-  labs(x = "Condition", y = "Systemic Racism Acknowledgment")
-
-# note in caption in slide controlling for Isolated Racism & political Ideology
-
-#### contrasts 
-
-emm_options(nesting = NULL)  # clear any inferred nesting
 
 emm <- emmeans(
   conf_model, ~ Condition,
   at = list(
-    Isolated_Racism_composite = mean(data$Isolated_Racism_composite, na.rm = TRUE),
-    Pol_num = mean(data$Pol_num, na.rm = TRUE),
-    Age_num = mean(data$Age_num, na.rm = TRUE)
-  )
+    Isolated_Racism_composite = mean(data$Isolated_Racism_composite, na.rm = TRUE))
 )
 
 contrast_list <- list(
@@ -296,16 +274,55 @@ contrast_list <- list(
   increase_vs_decrease = c( 1, -1,  0)
 )
 
-contrast(emm, contrast_list, adjust = "bonferroni") |> summary(infer = TRUE)
-
-# note: model code and contrasts are correct just insufficient observations to run 
-
+pairs(emm)
 ```
 
 
 *Side-by-side graph with original graph is ideal here*
 
 ### Exploratory analyses
+
+```{r}
+# # Get adjusted (estimated marginal) means for Condition
+# emm <- emmeans(conf_model, ~ Condition)
+# 
+# #  Convert to a data frame for plotting
+# emm_df <- as.data.frame(emm)
+# 
+# #  Plot
+# ggplot(emm_df, aes(x = Condition, y = emmean, fill = Condition)) +
+#   geom_col(color = "black", width = 0.6) +
+#   geom_errorbar(aes(ymin = lower.CL, ymax = upper.CL), width = 0.15) +
+#   scale_x_discrete(labels = c(
+#     "Control Condition" = "Control",
+#     "Decrease ANA Condition" = "Decrease ANA",
+#     "Increase ANA Condition" = "Increase ANA"
+#   )) +
+#   labs(x = "Condition", y = "Systemic Racism Acknowledgment")
+# 
+# # note in caption in slide controlling for Isolated Racism & political Ideology
+# 
+# #### contrasts 
+# 
+# emm_options(nesting = NULL)  # clear any inferred nesting
+# 
+# emm <- emmeans(
+#   conf_model, ~ Condition,
+#   at = list(
+#     Isolated_Racism_composite = mean(data$Isolated_Racism_composite, na.rm = TRUE),
+#     Pol_num = mean(data$Pol_num, na.rm = TRUE),
+#     Age_num = mean(data$Age_num, na.rm = TRUE)
+#   )
+# )
+# 
+# contrast_list <- list(
+#   increase_vs_control  = c( 1,  0, -1),
+#   increase_vs_decrease = c( 1, -1,  0)
+# )
+# 
+# contrast(emm, contrast_list, adjust = "bonferroni") |> summary(infer = TRUE)
+# 
+```
 
 Any follow-up analyses desired (not required).  
 
