@@ -123,7 +123,7 @@ library(lubridate)
 library(tidyverse)
 
 # import data
-data <- read.csv("/Users/juliaproshan/Documents/GitHub/murray2024/data/251 Replication - Murray & Koopmann-Holm (2024)_December 2, 2025_23.48 no IP.csv")
+data <- read.csv("/Users/juliaproshan/Documents/GitHub/murray2024/data/251 Replication - Murray & Koopmann-Holm (2024)_December 2, 2025_23.48.csv")
 
 
 # data exclusion / numeric variables 
@@ -358,7 +358,7 @@ contrast(emm, contrast_list)
 
 
 ```
-# Plot of primary model (without demographics)
+### Plot of primary model (without demographics)
 ```{r}
 #  convert to a data frame for plotting
 emm_df <- as.data.frame(emm)
