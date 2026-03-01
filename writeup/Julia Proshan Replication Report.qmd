@@ -389,6 +389,29 @@ exp_model_simple <- lm(Avoided_Neg_composite ~ Condition +  Actual_Neg_composite
 summary(exp_model_simple)
 Anova(exp_model_simple) 
 
+exp_model_simple2 <- lm(Avoided_Neg_composite ~ Condition, data = data)
+summary(exp_model_simple2)
+Anova(exp_model_simple2) 
+
+# Birgit follow up 
+follow_up_model <- lm(
+  Avoided_Neg_composite ~ Systemic_Racism_composite + Isolated_Racism_composite + Race,
+  data = data
+)
+
+# mean deviated mean for ANA (see paper)
+# share the dataset 
+# email raw data to Birgit 
+
+summary(follow_up_model)
+
+follow_up_model2 <- lm(
+  Avoided_Neg_composite ~ Systemic_Racism_composite * Condition + Isolated_Racism_composite + Race,
+  data = data
+)
+
+summary(follow_up_model2)
+
 ```
 
 ## Discussion
